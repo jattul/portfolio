@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.naver.erp.Board">
+
+<sql id="keywordwhere">
+	 <!-- 검색어 입력이 비어있지 않을 경우 -->
+	<if test="keyword !=null and keyword.length()>0">
+		<!-- select 가 '제목' 일 경우-->
+		<if test="keywordtype =='title'">
+		where upper(title) like upper('%${keyword}%')
+		</if>
+		
+		<!-- select 가 '내용' 일 경우 -->
+		<if test="keywordtype =='content'">
+		where upper(content) like upper('%${keyword}%')
+		</if>
+		
+		<!-- select 가 '이메일' 일 경우 -->
+		<if test="keywordtype=='email'">
+		 where upper(email) like upper('%${keyword}%') 
+		</if>
+	</if>
+</sql>
+
+<!-- 자주 묻는 질문 게시판 DB 에 저장된 목록 -->
+<select id="getBoardQuestionList"  parameterType="com.naver.erp.BoardSearchDTO" resultType="java.util.HashMap">
+select * from ( select rownum RNUM, zxcvb. * from (
+	SELECT 
+	no       		 as "no"     
+	,email        			 as "email"  
+	,title          			 as "title"  
+	,content        		 as "content"  
+	,readCount   		 as "readCount"  
+	,to_char(regDate,'YYYY-MM-DD')     			 as "regDate"  
+	,reportCount 		 as "reportCount"  
+	,commentCount 		 as "commentCount"  
+	,issecret          		 as "issecret"  
+	,partNo 				 as "partNo"  
+FROM QUESTION
+
+   <include refid="keywordwhere"></include>
+	
+	<if test="sort==null or sort.length()==0" >
+                        order by
+                           no desc
+                           ,regDate desc 
+                     </if>
+                        
+                     <if test="sort!=null and sort.length()>0" >
+                        order by ${sort}
+                     </if>
+<![CDATA[
+	) zxcvb) where RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo}
+]]>
+
+</select>
+<!-- 자주 묻는 질문 조회수 1 증가 -->
+<update id="questionUpReCount" parameterType="int">
+UPDATE QUESTION SET READCOUNT = NVL(READCOUNT,0)+1 WHERE NO =#{no}
+</update>
+
+<!-- 자주묻는질문 중 선택된 글 -->
+<select id="questionBoardSelected"  parameterType="int" resultType="com.naver.erp.BoardQuestionDTO">
+SELECT no             
+	,email        
+	,title          
+	,content     
+	,readCount 
+	,to_char(regDate,'YYYY-MM-DD') AS regDate    
+	,reportCount
+	,commentCount
+	,issecret         
+	,partNo
+FROM QUESTION WHERE NO=#{no}
+</select>
+
+<!-- 검색된 자주 묻는 질문 글 목록 총 개수 -->
+<select id="boardQuesitonListTotCnt"  parameterType="com.naver.erp.BoardSearchDTO" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM
+		QUESTION
+<include refid="keywordwhere"></include>
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 자유게시판 DB 에 저장된 목록 -->
+<select id="getboardfreeList"  parameterType="com.naver.erp.BoardSearchDTO" resultType="java.util.HashMap">
+select * from ( select rownum RNUM, zxcvb. * from (
+	SELECT no       		 as "no"     
+	,email        			 as "email"  
+	,title          			 as "title"  
+	,content        		 as "content"  
+	,readCount   		 as "readCount"  
+	,to_char(regDate,'YYYY-MM-DD')     			 as "regDate"  
+	,reportCount 		 as "reportCount"  
+	,commentCount 		 as "commentCount"  
+	,issecret          		 as "issecret"  
+	,partNo 				 as "partNo"  
+FROM FREE
+
+   <include refid="keywordwhere"></include>
+	
+	<if test="sort==null or sort.length()==0" >
+                        order by
+                           no desc
+                           ,regDate desc 
+                     </if>
+                        
+                     <if test="sort!=null and sort.length()>0" >
+                        order by ${sort}
+                     </if>
+<![CDATA[
+	) zxcvb) where RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo}
+]]>
+
+</select>
+<!-- 자유게시판 조회수 1 증가 -->
+<update id="freeupdateReCount" parameterType="int">
+UPDATE FREE SET READCOUNT = NVL(READCOUNT,0)+1 WHERE NO =#{no}
+</update>
+
+<!-- 자유게시판 중 선택된 글 -->
+<select id="boardfreeselected"  parameterType="int" resultType="com.naver.erp.BoardFreeDTO">
+SELECT no             
+	,email        
+	,title          
+	,content     
+	,readCount 
+	,to_char(regDate,'YYYY-MM-DD') AS regDate    
+	,reportCount
+	,commentCount
+	,issecret         
+	,partNo
+FROM FREE WHERE NO=#{no}
+</select>
+
+<!-- 검색된 자유게시판 글 목록 총 개수 -->
+<select id="freeBoardListTotCnt"  parameterType="com.naver.erp.BoardSearchDTO" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM
+		FREE
+<include refid="keywordwhere"></include>
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 공지사항 DB 에 저장된 목록 -->
+<select id="getBoardNoticeList"  parameterType="com.naver.erp.BoardSearchDTO" resultType="java.util.HashMap">
+select * from ( select rownum RNUM, zxcvb. * from (
+	SELECT no       		 as "no"     
+	,email        			 as "email"  
+	,title          			 as "title"  
+	,content        		 as "content"  
+	,readCount   		 as "readCount"  
+	,to_char(regDate,'YYYY-MM-DD')     			 as "regDate"  
+	,reportCount 		 as "reportCount"  
+	,commentCount 		 as "commentCount"  
+	,issecret          		 as "issecret"  
+	,partNo 				 as "partNo"  
+FROM NOTICE
+
+<include refid="keywordwhere"></include>
+	
+	<if test="sort==null or sort.length()==0" >
+                        order by
+                           no desc
+                           ,regDate desc 
+                     </if>
+                        
+                     <if test="sort!=null and sort.length()>0" >
+                        order by ${sort}
+                     </if>
+<![CDATA[
+	) zxcvb) where RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo}
+]]>
+</select>
+<!-- 공지사항 조회수 1 증가 -->
+<update id="noticeUpReCount" parameterType="int">
+UPDATE NOTICE SET READCOUNT = NVL(READCOUNT,0)+1 WHERE NO =#{no}
+</update>
+
+<!-- 공지사항 중 선택된 글 -->
+<select id="noticeBoard"  parameterType="int" resultType="com.naver.erp.BoardNoticeDTO">
+SELECT no             
+	,email        
+	,title          
+	,content     
+	,readCount 
+	,to_char(regDate,'YYYY-MM-DD') AS regDate    
+	,reportCount
+	,commentCount
+	,issecret         
+	,partNo
+FROM NOTICE WHERE NO=#{no}
+</select>
+
+<!-- 검색된 공지사항 글 목록 총 개수 -->
+<select id="noticeBoardListTotCnt"  parameterType="com.naver.erp.BoardSearchDTO" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM
+		NOTICE
+	<include refid="keywordwhere"></include>
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 문의게시판 DB 에 저장된 목록 -->
+<select id="getBoardQnaList"  parameterType="com.naver.erp.BoardSearchDTO" resultType="java.util.HashMap">
+select * from ( select rownum RNUM, zxcvb. * from (
+	SELECT no       		 as "no"     
+	,email        			 as "email"  
+	,title          			 as "title"  
+	,content        		 as "content"  
+	,readCount   		 as "readCount"  
+	,to_char(regDate,'YYYY-MM-DD')     			 as "regDate"  
+	,reportCount 		 as "reportCount"  
+	,commentCount 		 as "commentCount"  
+	,issecret          		 as "issecret"  
+	,headerno				as "headerno"
+	,partno 				 as "partno"  
+FROM ASK
+
+   <include refid="keywordwhere"></include>
+	
+	<if test="sort==null or sort.length()==0" >
+                        order by
+                           no desc
+                           ,regDate desc 
+                     </if>
+                        
+                     <if test="sort!=null and sort.length()>0" >
+                        order by ${sort}
+                     </if>
+<![CDATA[
+	) zxcvb) where RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo}
+]]>
+
+</select>
+<!-- 문의게시판 조회수 1 증가 -->
+<update id="qnaUpReCount" parameterType="int">
+UPDATE ASK SET READCOUNT = NVL(READCOUNT,0)+1 WHERE NO =#{no}
+</update>
+
+<!-- 문의게시판 중 선택된 글 -->
+<select id="qnaBoardSelected"  parameterType="int" resultType="com.naver.erp.BoardQnADTO">
+SELECT no             
+	,email        
+	,title          
+	,content     
+	,readCount 
+	,to_char(regDate,'YYYY-MM-DD') AS regDate    
+	,reportCount
+	,commentCount
+	,issecret        
+	,headerno		
+	,partno
+FROM ASK WHERE NO=#{no}
+</select>
+
+<!-- 검색된 문의게시판 글 목록 총 개수 -->
+<select id="boardQnaListTotCnt"  parameterType="com.naver.erp.BoardSearchDTO" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM
+		ASK
+<include refid="keywordwhere"></include>
+</select>
+
+
+
+
+
+
+
+
+<!-- 자유게시판 수정 -->
+<update id="boardFreeUpdate" parameterType="com.naver.erp.BoardFreeDTO" >
+	update FREE 
+	set TITLE = #{title} ,
+	     CONTENT= #{content}
+	 WHERE NO =  #{no}
+</update>
+<!-- 자유게시판 삭제 -->
+<update id="boardFreeDelete" parameterType="com.naver.erp.BoardFreeDTO" >
+	DELETE FROM FREE WHERE NO =  #{no} 
+</update>
+<!-- 자유게시판 저장 -->
+<insert id="boardFreeSave" parameterType="com.naver.erp.BoardFreeDTO" >
+INSERT INTO FREE(
+NO
+, EMAIL
+, TITLE
+, CONTENT
+, READCOUNT
+, REGDATE
+, REPORTCOUNT
+, COMMENTCOUNT
+, ISSECRET
+, PARTNO
+)VALUES(
+(SELECT nvl(MAX(NO),0) + 1 FROM FREE)
+, #{email}
+, #{title}
+, #{content}
+, 0
+, sysdate
+, 0
+, 0
+, 0
+, 1
+)
+</insert>
+
+
+
+
+
+
+
+
+
+
+
+<!-- 자유게시판 신고저장 -->
+<insert id="boardQnaReportSave" parameterType="com.naver.erp.BoardFreeDTO" >
+<selectKey resultType="string" keyProperty="reportno" order="BEFORE">
+        SELECT nvl(MAX(REPORTNO),0) + 1 FROM REPORT   
+    </selectKey>   
+    
+INSERT INTO REPORT
+(
+REPORTNO
+,REASON
+,REPORTCONTENT
+,REPORTEREMAIL
+,WRITEREMAIL
+,PARTNO
+,POSTNO
+)VALUES(
+#{reportno}, 
+#{reportreason}, 
+#{reportContent}, 
+#{email},  
+#{writerEmail, jdbcType=VARCHAR},  
+#{partno},
+#{no}
+)
+
+</insert>
+
+
+
+
+
+
+<!-- 문의게시판 신고저장 -->
+<insert id="boardFreeReportSave" parameterType="com.naver.erp.BoardFreeDTO" >
+<selectKey resultType="string" keyProperty="reportno" order="BEFORE">
+        SELECT nvl(MAX(REPORTNO),0) + 1 FROM REPORT   
+    </selectKey>   
+    
+INSERT INTO REPORT
+(
+REPORTNO
+,REASON
+,REPORTCONTENT
+,REPORTEREMAIL
+,WRITEREMAIL
+,PARTNO
+,POSTNO
+)VALUES(
+#{reportno}, 
+#{reportreason}, 
+#{reportContent}, 
+#{email}, 
+#{writerEmail, jdbcType=VARCHAR},  
+#{partno},
+#{no}
+)
+
+</insert>
+
+
+
+
+
+
+
+<!-- 문의게시판 저장 -->
+<insert id="boardQnaSave" parameterType="com.naver.erp.BoardQnADTO" >
+INSERT INTO ASK(
+NO
+, EMAIL
+, TITLE
+, CONTENT
+, READCOUNT
+, REGDATE
+, REPORTCOUNT
+, COMMENTCOUNT
+, ISSECRET
+, HEADERNO
+, PARTNO
+)VALUES(
+(SELECT nvl(MAX(NO),0) + 1 FROM ASK)
+, #{email}
+, #{title}
+, #{content}
+, 0
+, sysdate
+, 0
+, 0
+, 0
+, #{headerno}
+, 2
+)
+</insert>
+<!-- 문의게시판 수정 -->
+<update id="boardQnaUpdate" parameterType="com.naver.erp.BoardQnADTO" >
+	update ASK 
+	set TITLE = #{title} ,
+	     CONTENT= #{content},
+	     REGDATE = to_char(sysdate,'YYYY-MM-DD')
+	 WHERE NO =  #{no}
+</update>
+<!-- 문의게시판 삭제 -->
+<update id="boardQnaDelete" parameterType="com.naver.erp.BoardQnADTO" >
+	DELETE FROM ASK WHERE NO =  #{no}
+</update>
+
+
+
+
+
+
+
+
+<!-- 자유게시판 신고 카운트 -->
+<update id="boardFreeReportCountUp" parameterType="com.naver.erp.BoardFreeDTO" >
+	 UPDATE FREE SET REPORTCOUNT = NVL((REPORTCOUNT),0) + 1 WHERE NO = #{no}
+</update>
+
+
+
+
+
+
+
+<!-- 신고테이블에 신고당한 문의게시판 글 제목,신고횟수 저장 -->
+<update id="boardAskReportCountUp" parameterType="com.naver.erp.BoardFreeDTO" >
+	 UPDATE ASK SET REPORTCOUNT = NVL((REPORTCOUNT),0) + 1 WHERE NO = #{no}
+</update>
+
+
+
+
+<!-- 신고테이블에 신고당한 자유게시판 글 제목,신고횟수 저장 -->
+<update id="boardFreeReportReCountUp" parameterType="com.naver.erp.BoardFreeDTO" >
+	 UPDATE REPORT 
+	 SET TITLE = (SELECT TITLE FROM FREE WHERE NO = #{no})
+	 , REPORTCOUNT =  (SELECT REPORTCOUNT FROM FREE WHERE NO = #{no})
+	 WHERE REPORTNO = #{reportno} 
+</update> 
+
+
+
+
+
+
+<!-- 문의게시판 신고 카운트 -->
+<update id="boardAskReportReCountUp" parameterType="com.naver.erp.BoardFreeDTO" >
+	  UPDATE REPORT 
+	 SET TITLE = (SELECT TITLE FROM ASK WHERE NO = #{no})
+	 , REPORTCOUNT =  (SELECT REPORTCOUNT FROM ASK WHERE NO = #{no})
+	 WHERE REPORTNO = #{reportno}
+</update>
+
+
+
+
+
+
+<!-- 공지사항 저장 -->
+<insert id="noticeSave" parameterType="com.naver.erp.BoardNoticeDTO" >
+INSERT INTO NOTICE(
+NO
+, EMAIL
+, TITLE
+, CONTENT
+, READCOUNT
+, REGDATE
+, REPORTCOUNT
+, COMMENTCOUNT
+, ISSECRET
+, PARTNO
+)VALUES(
+(SELECT nvl(MAX(NO),0) + 1 FROM NOTICE)
+, #{email}
+, #{title}
+, #{content}
+, 0
+, sysdate
+, 0
+, 0
+, 0
+, 1
+)
+</insert>
+<!-- 공지사항 수정 -->
+<update id="noticeUpdate" parameterType="com.naver.erp.BoardNoticeDTO" >
+	update NOTICE 
+	set TITLE = #{title} ,
+	     CONTENT= #{content},
+	     REGDATE = to_char(sysdate,'YYYY-MM-DD')
+	 WHERE NO =  #{no}
+</update>
+<!-- 공지사항 삭제 -->
+<update id="noticeDelete" parameterType="com.naver.erp.BoardNoticeDTO" >
+	DELETE FROM NOTICE WHERE NO =  #{no}
+</update>
+
+
+
+
+<!-- 자주 묻는 질문 저장 -->
+<insert id="questionSave" parameterType="com.naver.erp.BoardQuestionDTO" >
+INSERT INTO QUESTION(
+NO
+, EMAIL
+, TITLE
+, CONTENT
+, READCOUNT
+, REGDATE
+, REPORTCOUNT
+, COMMENTCOUNT
+, ISSECRET
+, PARTNO
+)VALUES(
+(SELECT nvl(MAX(NO),0) + 1 FROM QUESTION)
+, #{email}
+, #{title}
+, #{content}
+, 0
+, sysdate
+, 0
+, 0
+, 0
+, 1
+)
+</insert>
+<!-- 자주묻는질문 수정 -->
+<update id="questionUpdate" parameterType="com.naver.erp.BoardQuestionDTO" >
+	update QUESTION 
+	set TITLE = #{title} ,
+	     CONTENT= #{content},
+	     REGDATE = to_char(sysdate,'YYYY-MM-DD')
+	 WHERE NO =  #{no}
+</update>
+<!-- 자주 묻는 질문 삭제 -->
+<update id="questionDelete" parameterType="com.naver.erp.BoardQuestionDTO" >
+	DELETE FROM QUESTION WHERE NO =  #{no}
+
+</update>
+
+
+
+
+
+
+
+
+
+
+</mapper>

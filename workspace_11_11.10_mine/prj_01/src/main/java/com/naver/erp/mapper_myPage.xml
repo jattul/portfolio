@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.naver.erp.MyPageDAO">
+
+
+
+ <select id="myWriterList"  resultType="java.util.HashMap" parameterType="String">
+		SELECT typetitle as "typetitle"
+	         ,type as "type"
+			,no as "no"
+			,TITLE as "title"
+			,to_char(regDate,'YYYY-MM-DD')     			 as "regDate" 
+			,EMAIL  as "email"
+			FROM(
+			SELECT '문의게시판' AS typetitle
+			,'2' type
+			,no 
+			,TITLE 
+			,REGDATE 
+			,EMAIL  
+			FROM ASK 
+			
+			UNION ALL
+			
+			SELECT '자유게시판' AS typetitle
+			,'1' type
+			,no 
+			,TITLE  
+			,REGDATE
+			,EMAIL 
+			FROM FREE 
+		) DS where ds.EMAIL = #{sessionEmail}
+ 
+</select>
+
+
+
+ <select id="getMemberInfo"  resultType="java.util.HashMap">
+		select email,name,addr,pw,phone from memberboard
+			where email=#{sessionEmail}
+ 
+</select>
+
+
+
+<select id="getBookList"  resultType="java.util.HashMap" parameterType="String">
+		select
+			no||''			as "no"
+			,memberno		as "memberNo"  
+			,memberemail	as "memberEmail"  
+			,to_char(rentalDate, 'yyyy-mm-dd')		as "rentalDate"
+			,to_char(rentalDate + 4, 'yyyy-mm-dd')	as "returnDate"
+			,toolNo||''		as "toolNo"
+			,jijumNo||''	as "jijumNo"
+			,toolName		as "toolName"
+		from 
+			onrental
+		where
+			memberEmail = #{member_email}
+ 
+</select>
+
+
+<select id="getJijumList"  resultType="java.util.HashMap">
+		select
+			no||''			as "no"
+			,name			as "name"  
+			,time			as "time"
+			,phone			as "phone"
+			,managephone	as "managePhone"
+			,addr			as "addr"
+			,locationno||''	as "locationNo"
+		from 
+			jijum
+ 
+</select>
+
+
+
+
+
+
+
+
+
+
+<select id="getOnBookingList"  resultType="java.util.HashMap" parameterType="String">
+		select
+			no||''			as "no"
+			,memberno		as "memberNo"  
+			,memberemail	as "memberEmail"  
+			,to_char(bookDate, 'yyyy-mm-dd')		as "bookDate"
+			,toolNo||''		as "toolNo"
+			,jijumNo||''	as "jijumNo"
+			,toolName		as "toolName"
+		from 
+			onbooking
+		where
+			memberEmail = #{member_email}
+ 
+</select>
+
+
+<select id="getReturnList"  resultType="java.util.HashMap" parameterType="String">
+		select
+			no||''			as "no"
+			,memberno		as "memberNo"  
+			,memberemail	as "memberEmail"  
+			,to_char(rentalDate, 'yyyy-mm-dd')		as "rentalDate"
+			,to_char(rentalDate + 4, 'yyyy-mm-dd')	as "returnDate"
+			,toolNo||''		as "toolNo"
+			,jijumNo||''	as "jijumNo"
+			,toolName		as "toolName"
+		from 
+			return
+		where
+			memberEmail = #{member_email}
+ 
+</select>
+
+
+
+
+
+
+<select id="isCorrectPwd" resultType="int" parameterType="hashmap">
+	select count(*) from memberboard where email=#{email} and pw=#{pastPwd}
+
+</select>
+
+<update id="upPwd" parameterType="hashmap" >
+	
+	 	update 
+			memberboard
+		set
+			pw = #{newPwd}
+		 where email = #{email}
+	
+
+</update>
+
+
+
+
+
+<delete id="delBookNo" parameterType="int">
+	delete from onBooking where no = #{no}
+
+
+</delete>
+
+
+
+
+ <update	id="upToolStatus" parameterType="int">
+  	update tool
+  		set
+  			nowstatus = 0
+  			where no = #{no}
+  
+  
+  </update>
+
+
+
+
+
+
+
+
+
+
+</mapper>
