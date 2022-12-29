@@ -1,0 +1,58 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%@include file="/WEB-INF/views/common.jsp" %>  
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>사원 휴가 결제</title>
+<script>
+	$(function(){
+		
+	})
+	
+	function detailClick( vac_use_no ){
+		var obj = $("[name='vacationCheckDetailForm']");
+		obj.find("[name='vac_use_no']").val(vac_use_no);
+		document.vacationCheckDetailForm.submit();
+	}
+	
+</script>
+</head>
+<body>
+	<center>
+	<div style="height:30px"></div>
+	<h2>사원 휴가 결제</h2>
+    <form name="vacationCheck" action="/vacationCheck.do" method="post">
+        <table class="mainTable" border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse" align="center">
+            <tr>
+                <th>순번</th>
+                <th>제목</th>
+                <th>신청일</th>
+                <th>결제일</th>
+                <th>진행상황</th>
+            </tr>
+            
+
+            <c:forEach var="vacationCheck" items="${requestScope.vacationAllUseList}" varStatus="loopTagStatus">
+	            	<tr onclick="detailClick(${vacationCheck.vac_use_no})">
+	            		<th><span style="cursor:pointer">${vacationCheck.vac_use_no}</span></th>
+	            		<th><span style="cursor:pointer">${vacationCheck.reason}</span></th>
+	            		<th><span style="cursor:pointer">${vacationCheck.apply_date}</span></th>
+	            		<th><span style="cursor:pointer">${vacationCheck.end_date}</span></th>
+	            		<th><span style="cursor:pointer">${vacationCheck.check_no}</span></th>
+	            	</tr>
+            </c:forEach>
+
+        </table>
+    </form>
+    </center>
+    
+	<form name="vacationCheckDetailForm" action="/vacationCheckDetail.do" method="post">
+		<input type="hidden" name="vac_use_no" value="">
+	</form>
+    
+</body>
+</html>

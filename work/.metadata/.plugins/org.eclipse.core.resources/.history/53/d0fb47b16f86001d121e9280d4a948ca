@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+body {background: rgb();}
+
+body,form,td,th,pre,span { 
+	font-size: 9pt;  
+	color: black; 
+	line-height: 160%; 
+	font-family: 굴림,tahoma,돋움,verdana; 
+} 
+
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+
+#mainTable {}

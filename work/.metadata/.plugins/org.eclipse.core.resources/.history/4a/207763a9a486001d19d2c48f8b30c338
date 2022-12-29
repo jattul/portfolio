@@ -1,0 +1,122 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<%@include file="/WEB-INF/views/common.jsp" %>    
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>휴가 신청하기</title>
+<script>
+	$(function(){
+		var today = getToday();
+		$("#applyDate").val(today);	
+	})
+	
+	function getToday(){
+		var date = new Date();
+		return date.getFullYear()+"-"+("0"+(date.getMonth()+1)).slice(-2)+"-"+("0"+(date.getDate())).slice(-2)
+	}
+	
+	
+	
+	
+	function applySave(){
+		
+		var	reason = $("[name='reason']")
+		var reasonVal = reason.val().trim();
+		var start = $("[name='applyStartDate']")
+        var end = $("[name='applyEndDate']")
+        var startVal = start.val()
+        var endVal = end.val()
+        
+        var obj1 = startVal.split('-').join('');
+		var obj2 = endVal.split('-').join('');
+        
+        if(obj1<obj2){
+        	startVal = "";
+        	endVal = "";
+        	alert(휴가기간이 잘못되었습니다.);
+        }
+        
+		
+		if(confirm("저장 하시겠습니까?")){
+			$.ajax({
+				url:"/vacationApplyProc.do"
+				,type:"post"
+				,data:$("[name='vacationApplyForm']").serialize()
+				,success:function(applyCnt){
+					if( applyCnt==1 ) { 
+						alert("휴가신청 성공!")
+						document.vacationMainForm.submit();
+					} else {
+						alert("휴가신청 실패!")
+					}
+				}
+				,error:function(){ alert("웹서버 접속 실패!") }
+			})	
+		}else{ return; }
+	}
+	
+	
+	
+	function applyCancel(){
+		if(confirm("취소 하시겠습니까?")==false){
+			return;
+		}
+		document.vacationMainForm.submit();
+	}
+	
+	
+	
+	
+	
+</script>
+<style>
+	.reason{
+	 	width: 750px;
+        height: 250px;
+	}
+</style>
+</head>
+<body>
+    <center>
+    <form name="vacationApplyForm" method="post" action="/vacationApply.do">
+    <div style="height:30px"></div>
+     <h3>휴가신청</h3>
+        <table class="mainTable" border="1" cellpadding="5" style="border-collapse:collapse" align="center" width="80%"> 
+
+            <tr>
+	            <th>신청일</th>
+	            <td><input type="text" name="applyDate" id="applyDate" readonly>
+	            <th>신청자</th>
+	            <td><input type="text" name="applier" id="applier" value="${sessionScope.name}" readonly>
+     		</tr>
+            <tr>
+	            <th>휴가 기간</th>
+	            <td><input type="date" name="applyStartDate" min="sysdate" max="2099-12-31"/>~
+	            	<input type="date" name="applyEndDate" min="sysdate" max="2099-12-31"/></td>
+	            <th>휴가 일수</th>
+	            <td><input type="text" name="vacationDays" value="">일</td>
+            </tr>        
+            <tr>
+	            <th>신청사유</th>
+	            <td colspan="3">
+	            	<input type="text" name="reason" size=20 value="">
+				</td>          
+            </tr>
+        </table>
+    </form>
+    
+    
+      <input type="button" value="저장" onClick="applySave();">
+      <input type="button" value="취소" onClick="applyCancel();">
+    </center>   
+        
+    <form name="vacationMainForm" method="post" action="/vacationMain.do"></form>
+    <form name="vacationApplyDetailForm" method="post" action="/vacationApplyDetail.do"></form>
+    
+    
+</body>
+</html>

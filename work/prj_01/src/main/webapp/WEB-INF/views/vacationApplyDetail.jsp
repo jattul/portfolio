@@ -1,0 +1,96 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<%@include file="/WEB-INF/views/common.jsp" %>    
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>휴가 신청 상세보기</title>
+<script>
+
+	function applyCancel(){
+		if(confirm("회수 하시겠습니까?")){
+			$.ajax({
+				url:"/vacationCancelProc.do"
+				,type:"post"
+				,data:$("[name='vacationApplyDetailForm']").serialize()
+				,success:function(cancelCnt){
+					if( cancelCnt==1 ) { 
+						alert("휴가 회수 성공!")
+						document.vacationMainForm.submit();
+					} else {
+						alert("휴가 회수 실패!")
+					}
+				}
+				,error:function(){ alert("웹서버 접속 실패!") }
+			})	
+		}else{ return; }	
+	}
+
+	
+	function goMain(){
+		document.vacationMainForm.submit();	
+	}
+	
+	
+	
+</script>
+<style>
+	.reason{
+	 	width: 750px;
+        height: 250px;
+	}
+</style>
+</head>
+<body>
+   	
+    <form name="vacationApplyDetailForm" method="post">
+    <div style="height:30px"></div>
+     <center><h2>휴가신청 상세보기</h3></center>
+     
+     
+     <div class=detailUpperBtn>
+     	<input type="button" name="cancel" value="회수" onClick="applyCancel();">
+     </div> 
+     
+     
+     <div style="height:5px"></div>
+      <center>
+        <table class="mainTable" border="1" cellpadding="5" style="border-collapse:collapse" align="center" width="80%"> 
+ 
+			<input type="hidden" name="vac_use_no" value="${requestScope.applyDetail.vac_use_no}">
+            <tr>
+            	<th>신청일</th>
+            	<td><input type="text" name="applydate" value="${requestScope.applyDetail.apply_date}" readonly>
+            	<th>신청자</th>
+           		<td><input type="text" name="applier" value="${requestScope.applyDetail.name}" readonly>
+     		</tr>
+            <tr>
+            	<th>휴가 기간</th>
+            	<td><input type="text" name="applydate" value="${requestScope.applyDetail.start_date}" readonly>
+            		~<input type="text" name="applydate" value="${requestScope.applyDetail.end_date}" readonly></td>
+            	<th>휴가 일수</th>
+            	<td><input type="text" name="vacationDays" value="${requestScope.applyDetail.tot_date}" readonly>일</td>
+            </tr>        
+            <tr>
+            	<th>신청사유</th>
+            	<td colspan="3">
+            		<input type="text" name="reason" size=20 value="${requestScope.applyDetail.reason}" readonly>
+            	</td>          
+            </tr>
+              
+        </table>
+    </form>
+    <br>
+    <input type="button" value="목록으로" onClick="goMain();">
+    </center>   
+        
+        
+        
+    <form name="vacationMainForm" method="post" action="/vacationMain.do"></form>
+   
+   
+</body>
+</html>

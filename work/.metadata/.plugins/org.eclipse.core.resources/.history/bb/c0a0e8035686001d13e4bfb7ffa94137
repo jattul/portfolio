@@ -1,0 +1,34 @@
+package com.naver.erp;
+
+import java.util.List;
+import java.util.Map;
+
+public interface VacationDAO {
+	
+	List<Map<String,String>> getVacationList(VacationSearchDTO vacationSearchDTO);
+	
+	int vacationAllListTotCnt();
+	
+	int vacationListTotCnt(VacationSearchDTO vacationSearchDTO);
+	
+	List<Map<String,String>> getVacationUseList( String id );
+	
+	List<Map<String,String>> getVacationAllUseList();
+	
+	String getEmpName( String id );
+	
+	int vacationApply( Map<String,String> vacationApply );
+	
+	Map<String,String> getApplyDetail( int vac_use_no );
+	
+	int vacationCancel(int vac_use_no);
+	
+	int vacationUpdate(Map<String,String> update_data);
+	
+	int vacationCheck( Map data );
+	
+	int vacationNotCheck( Map data );
+	
+	
+	
+}

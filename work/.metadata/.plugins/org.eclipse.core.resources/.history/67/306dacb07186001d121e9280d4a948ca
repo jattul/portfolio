@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+
+
+body,form,table,td,th,pre,span { 
+	font-size: 12pt;  
+	color: black; 
+	line-height: 160%; 
+	font-family: 굴림,tahoma,돋움,verdana; 
+} 
+
+.loginPage
+
+#mainTable {}

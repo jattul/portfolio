@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.naver.erp.Vacation">
+
+<!--==================================================================================================-->
+<select id="getVacationList" parameterType="com.naver.erp.VacationSearchDTO" resultType="java.util.HashMap">
+	select * from ( select rownum RNUM, zxcvb. * from (
+		select
+			  e.emp_no
+			  ,e.dep_no
+			  ,e.user_roll
+			  ,e.id
+			  ,e.pwd
+			  ,e.name
+			  ,e.hire_date
+			  ,e.phone
+			  ,e.vac_count
+			  ,d.dep_name
+		from 
+			employee e, department d
+		where
+			e.dep_no = d.dep_no
+			<if test="keyword != null and keyword.length()>0">
+					<if test="keywordtype =='dept'">
+					and upper(d.dep_name) like upper('%${keyword}%')
+					</if>
+					
+					<!-- select 가 '내용' 일 경우 -->
+					<if test="keywordtype =='name'">
+					and upper(e.name) like upper('%${keyword}%')
+					</if>
+					
+					<!-- select 가 '이메일' 일 경우 -->
+					<if test="keywordtype=='id'">
+					and upper(e.id) like upper('%${keyword}%') 
+					</if>
+			</if>
+	<![CDATA[
+	) zxcvb) where RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo}
+	]]>
+</select>
+
+
+<!--==================================================================================================-->
+<select id="vacationAllListTotCnt" resultType="int">
+	select
+		count(*)
+	from
+		employee
+</select>
+
+
+<!--==================================================================================================-->
+<select id="vacationListTotCnt" parameterType="com.naver.erp.VacationSearchDTO" resultType="int">
+	select
+		count(*)
+	from
+		employee e, department d
+	where
+		1=1
+		<if test="keyword != null and keyword.length()>0">
+				<if test="keywordtype =='dept'">
+				and upper(d.dep_name) like upper('%${keyword}%')
+				</if>
+				
+				<!-- select 가 '내용' 일 경우 -->
+				<if test="keywordtype =='name'">
+				and upper(e.name) like upper('%${keyword}%')
+				</if>
+				
+				<!-- select 가 '이메일' 일 경우 -->
+				<if test="keywordtype=='id'">
+				and upper(e.id) like upper('%${keyword}%') 
+				</if>
+		</if>
+</select>
+
+
+
+ 
+
+
+<!--==================================================================================================-->
+<select id="getVacationUseList" parameterType="String" resultType="java.util.HashMap">
+	select
+		vac_use_no	as "vac_use_no"
+		,emp_no		as "emp_no"
+		,name		as "name"
+		,tot_date	as "tot_date"
+		,apply_date	as "apply_date"
+		,start_date	as "start_date"
+		,end_date	as "end_date"
+		,check_no	as "check_no"
+		,reason		as "reason"
+	from
+		vac_use
+	where
+		name = (select name from employee e where e.id =#{id})
+</select>
+
+
+<!--==================================================================================================-->
+<select id="getVacationAllUseList" resultType="java.util.HashMap">
+	select
+		vac_use_no
+		,emp_no
+		,name
+		,tot_date
+		,apply_date
+		,start_date
+		,end_date
+		,check_no
+		,reason
+	from
+		vac_use
+</select>
+
+
+
+<!--==================================================================================================-->
+<select id="getEmpName" parameterType="String" resultType="String">
+	select
+		name
+	from 
+		employee
+	where
+		id = #{id}
+</select>
+
+
+
+
+<!--==================================================================================================-->
+<insert id="vacationApply" parameterType="hashmap">
+	insert into vac_use(
+		vac_use_no
+		,emp_no
+		,name
+		,tot_date
+		,apply_date
+		,start_date
+		,end_date
+		,check_no
+		,reason
+	)
+	values(
+		(SELECT nvl(MAX(vac_use_no),1) + 1 FROM vac_use)
+		,(select emp_no from employee where id = #{id})
+		,(select name from employee where id = #{id})
+		,${vacationDays}
+		,to_date(#{applyDate},'YYYY-MM-DD')
+		,to_date(#{applyStartDate},'YYYY-MM-DD')
+		,to_date(#{applyEndDate},'YYYY-MM-DD')
+		,1
+		,#{reason}
+	)
+</insert>
+
+
+
+
+<!--==================================================================================================-->
+<select id="vacationApplyDetail" parameterType="int" resultType="java.util.HashMap">
+	select
+		vac_use_no
+		,emp_no
+		,name
+		,tot_date
+		,apply_date
+		,start_date
+		,end_date
+		,check_no
+		,reason
+	from
+		vac_use
+	where
+		vac_use_no = ${vac_use_no}
+</select>
+
+
+
+
+
+
+<!--==================================================================================================-->
+<delete id="vacationCancel" parameterType="int">
+	delete
+	from
+		vac_use
+	where
+		vac_use_no = ${vac_use_no}
+</delete>
+
+
+
+<!--==================================================================================================-->
+<update id="vacationUpdate" parameterType="hashmap">
+	update
+		employee
+	set
+		vac_count = ${update_vac}
+	where
+		id = #{update_id}
+</update>
+
+
+
+
+
+
+</mapper>

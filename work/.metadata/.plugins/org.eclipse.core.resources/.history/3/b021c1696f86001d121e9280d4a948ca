@@ -1,0 +1,83 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%@include file="/WEB-INF/views/common.jsp" %>  
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>로그인</title>
+<script>
+	$(function(){
+		
+	})
+	
+	
+	function loginClick(){
+		
+		var idObj = $("[name='id']");
+		var idVal = idObj.val();
+		if( idVal.split(" ").join("")==""){
+			alert("아이디를 입력해주세요")
+			idObj.val("");
+			idObj.focus();
+			return;
+		}
+		//-------------------------------
+		var pwdObj = $("[name='pwd']");
+		var pwdVal = pwdObj.val();
+		if( pwdVal.split(" ").join("")==""){
+			alert("비밀번호를 입력해주세요")
+			pwdObj.val("");
+			pwdObj.focus();
+			return;
+		}
+		//===============================================
+		$.ajax({
+			url:"loginProc.do"
+			,type:"post"
+			,data:$("[name='loginForm']").serialize() 
+			,success:function(idCnt){
+				if( idCnt==1 ){
+					location.replace("/vacationMain.do")
+				}
+				else{
+					alert("로그인 실패! 아이디 또는 암호가 틀립니다. 재입력해 주십시요!");
+					idObj.val("");
+					pwdObj.val("");
+				}
+			}
+			,error:function( ){
+				alert("웹서버 접속 실패");
+			}
+		})
+		
+		
+	//----------------------------------	
+	} // loginClick 함수 종료
+	//----------------------------------
+	
+</script>
+</head>
+<body>
+	<center>
+    <form name="loginForm" action="/loginForm.do" method="post">
+        <table border=1 cellpadding=5>
+			<h2>로그인</h2>
+			<tr>
+                <td><input type="text" name="id" placeholder="username"></td>
+            </tr>	
+			<tr>
+                <td><input type="password" name="pwd" placeholder="password"></td>
+            </tr>
+		</table>
+		<div style="height:5px"></div>
+		<input type="button" value="로그인" onclick="loginClick()">
+    </form>
+    </center>
+    
+    <form name="vacationMain" action="/vacationMain.do" method="post"></form>
+    
+</body>
+</html>

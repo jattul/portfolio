@@ -1,0 +1,124 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<%@include file="/WEB-INF/views/common.jsp" %>    
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>휴가 결제 상세보기</title>
+<script>
+
+	$(function(){
+		var today = getToday();
+		$("[name='agree_date']").val(today);	
+	})
+	
+	
+	function goMain(){
+		document.vacationCheckForm.submit();	
+	}
+
+	
+	function getToday(){
+		var date = new Date();
+		return date.getFullYear()+"-"+("0"+(date.getMonth()+1)).slice(-2)+"-"+("0"+(date.getDate())).slice(-2);
+	}
+
+	
+	//============================================================================
+	function check(){
+		if(confirm("결제 하시겠습니까?")){
+			$.ajax({
+				url:"/vacationCheckProc.do"
+				,type:"post"
+				,data:$("[name='vacationCheckDetailForm']").serialize()
+				,success:function(checkCnt){
+					if( checkCnt==1 ) { 
+						alert("결제 승인 성공!")
+						document.vacationCheckForm.submit();
+					} else {
+						alert("결제 승인 실패!")
+					}
+				}
+				,error:function(){ alert("웹서버 접속 실패!") }
+			})
+		}else{ return; }
+	}
+	
+	
+	//============================================================================
+	function notCheck(){
+		if(confirm("반려 하시겠습니까?")){
+			$.ajax({
+				url:"/vacationNotCheckProc.do"
+				,type:"post"
+				,data:$("[name='vacationCheckDetailForm']").serialize()
+				,success:function(notCheckCnt){
+					if( notCheckCnt==1 ) { 
+						alert("결제 반려 성공!")
+						document.vacationCheckForm.submit();
+					} else {
+						alert("결제 반려 실패!")
+					}
+				}
+				,error:function(){ alert("웹서버 접속 실패!") }
+			})	
+		}else{ return; }
+	}
+	
+	
+</script>
+<style>
+	.reason{
+	 	width: 750px;
+        height: 250px;
+	}
+</style>
+</head>
+<body>
+   
+    <form name="vacationCheckDetailForm" method="post" action="vacationCheckDetail.do">
+    <div style="height:30px"></div>
+      <center><h3>휴가 결제 상세보기</h3></center>
+      <div class="upperBtn">
+	     <input type="button" value="승인" onClick="check();">
+	     <input type="button" value="반려" onClick="notCheck();">
+      </div>
+      <center>
+        <table class="mainTable" border="1" cellpadding="5" style="border-collapse:collapse" align="center" width="80%"> 
+
+			<input type="hidden" name="agree_date" value="">
+			<input type="hidden" name="vac_use_no" value="${requestScope.checkDetail.vac_use_no}">
+            <tr>
+            	<th>신청일</th>
+            	<td><input type="text" name="applydate" id="applydate" value="${requestScope.checkDetail.apply_date}" readonly>
+            	<th>신청자</th>
+            	<td><input type="text" name="applier" id="applier" value="${requestScope.checkDetail.name}" readonly>
+     		</tr>
+            <tr>
+            	<th>휴가 기간</th>
+            	<td><input type="text" name="applydate" value="${requestScope.checkDetail.start_date}" readonly>
+            		~<input type="date" name="applydate" value="${requestScope.checkDetail.end_date}" readonly></td>
+            	<th>휴가 일수</th>
+            	<td><input type="text" name="vacationDays" value="${requestScope.checkDetail.tot_date}" readonly>일</td>
+            </tr>        
+            <tr>
+            	<th>신청사유</th>
+            	<td colspan="3">
+            		<input type="text" name="reason" size=20 value="${requestScope.checkDetail.reason}" readonly>
+            	</td>          
+            </tr>
+        </table>
+         
+    </form>
+    <input type="button" value="목록으로" onClick="goMain();">
+    </center>  
+        
+        
+    <form name="vacationCheckForm" method="post" action="/vacationCheck.do"></form>
+    
+    
+</body>
+</html>

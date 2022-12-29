@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+body {background: lightblue;}
+
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+
+#mainTable {}

@@ -1,0 +1,128 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<%@include file="/WEB-INF/views/common.jsp" %>  
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>사원 휴가일 관리</title>
+<script>
+	$(function(){
+		
+	})
+	
+	function searchClick(){
+		var keyword = $("[name='keyword']").val();
+		keyword = $.trim(keyword);
+		var keywordtype = $("[name='keywordtype']").val();
+		
+		document.vacationManage.submit();
+	}
+	
+	
+	function saveClick(){
+		if(confirm("저장 하시겠습니까?")){
+			$.ajax({
+				url:"/vacationUpdateProc.do"
+				,type:"post"
+				,data:$("[name='update_form']").serialize()
+				,success:function(updateCnt){
+					if( updateCnt==1 ) { 
+						alert("휴가 수정 성공!")
+						document.vacationManage.submit();
+					} else {
+						alert("휴가 수정 실패!")
+					}
+				}
+				,error:function(){ alert("웹서버 접속 실패!") }
+			})	
+		}else{ return; }
+		
+	}
+	
+	
+	function pageNoBtn( pageNo ){
+        $(".selectPageNo").val( pageNo );
+        searchClick( );
+    }
+	
+	
+	
+</script>
+</head>
+<body>
+	<center>
+    <form name="vacationManage" action="/vacationManage.do" method="post">
+    
+    	<form name="manageSearchForm" method="post" action="/vacationManage.do">
+	        <select name="keywordtype">
+	            <option value="dept" ${requestScope.boardSearchDTO.keywordtype == '"dept"' ? 'selected="selected"' : '' }>부서</option>
+	            <option value="name" ${requestScope.boardSearchDTO.keywordtype == 'name' ? 'selected="selected"' : '' }>이름</option>
+	            <option value="id" ${requestScope.boardSearchDTO.keywordtype == 'id' ? 'selected="selected"' : '' }>사번</option>
+	        </select>
+	        <input type="text" name="keyword" placeholder="검색어">
+	        <input type="button" value="검색" onclick="searchClick()"><br><br>
+        </form>
+        
+        
+        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse" align="center">
+            <tr>
+                <th>사번</th>
+                <th>이름</th>
+                <th>부서</th>
+                <th>총 휴가일수</th>
+                <th colspan="2">남은일수</th>
+            </tr>
+            
+            <c:forEach var="vaclist" items="${requestScope.vacationList}" varStatus="loopTagStatus">
+	            	<tr>
+	            		<input name="update_id" type="hidden" value="${vaclist.id}">
+	            		<td>${vaclist.id}</td>
+	            		<td>${vaclist.name}</td>
+	            		<td>${vaclist.dep_name}</td>
+	            		<td style="width: 30px;"><input type="text" name="update_vac" placeholder="남은일수" size="4" value="${vaclist.vac_count}"></td>
+	            		<td><input type="button" value="저장" onclick="saveClick()"></td>
+	            	</tr>
+	            </form>
+            </c:forEach>
+
+        </table>
+    </form>
+    </center>
+    
+    
+    <center>
+    	 <c:if test="${requestScope.vacationListTotCnt>0}">
+	      	<span class="nextBtn" style="cursor:pointer" onclick="pageNoBtn(1);">처음</span>
+	        <span class="nextBtn" style="cursor:pointer" onclick="pageNoBtn(${requestScope.pagingMap.selectPageNo}-1);">이전</span>
+      	 <c:forEach  var="no"  begin="${requestScope.pagingMap.begin_pageNo_perPage}"  
+                                end="${requestScope.pagingMap.end_pageNo_perPage}" step="1">      
+               <c:if test="${requestScope.pagingMap.selectPageNo!=no}">                 
+                  <span style="cursor:pointer" onclick="pageNoBtn(${no});">${no}</span>&nbsp;
+               </c:if>
+               <c:if test="${requestScope.pagingMap.selectPageNo==no}">${no}&nbsp;</c:if>
+         </c:forEach>
+         <span class="nextBtn" style="cursor:pointer" onclick="pageNoBtn(${requestScope.pagingMap.selectPageNo}+1);">다음</span>
+         <span class="nextBtn" style="cursor:pointer" onclick="pageNoBtn(${requestScope.pagingMap.last_pageNo});">마지막</span>
+     	</c:if>
+     </center>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+</body>
+</html>

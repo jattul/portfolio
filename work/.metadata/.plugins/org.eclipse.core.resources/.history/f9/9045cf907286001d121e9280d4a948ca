@@ -1,0 +1,98 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%@include file="/WEB-INF/views/common.jsp" %>  
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>메인</title>
+<script>
+	$(function(){
+		
+	})
+	
+	function manageClick(){
+		document.vacationManage.submit();
+	}
+	function checkClick(){
+		document.vacationCheck.submit();
+	}
+	function applyClick(){
+		document.vacationApply.submit();
+	}
+	function detailClick( vac_use_no ){
+		var obj = $("[name='vacationApplyDetail']");
+		obj.find("[name='vac_use_no']").val(vac_use_no);
+		document.vacationApplyDetail.submit();
+	}
+	
+</script>
+
+</head>
+<body>
+	<center>
+    <form name="vacationMain" action="/vacationMain.do" method="post">
+    	
+    	<%
+    		String id = (String)session.getAttribute("id");
+    		if(id.equals("system")){%>
+		        <input type="button" value="휴가일관리" onclick="manageClick()">
+		        <input type="button" value="휴가 결재" onclick="checkClick()"><br><br>
+    		<%}
+    	%>
+    	
+    	<div style="height:30px"></div>
+    	<h2>내 휴가 관리하기</h2>
+        <input type="button" value="휴가신청" onclick="applyClick()"><br>
+        <div style="height:5px"></div>
+        <table id="mainTable" border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse" align="center">
+            <tr>
+                <th>순번</th>
+                <th>제목</th>
+                <th>신청일</th>
+                <th>시작일</th>
+                <th>종료일</th>
+                <th>진행상황</th>
+            </tr>
+            
+            
+            
+            <c:forEach var="vacUseList" items="${requestScope.vacationUseList}" varStatus="loopTagStatus">
+	            <tr height="40px" align="center" onclick="detailClick(${vacUseList.vac_use_no})">
+	            	<td style="cursor:pointer;text-align: center;height:36px;">${vacUseList.vac_use_no}</td>
+	            	<td style="cursor:pointer;text-align: center;height:36px;">${vacUseList.reason}</td>
+	            	<td style="cursor:pointer;text-align: center;height:36px;">${vacUseList.apply_date}</td>
+	            	<td style="cursor:pointer;text-align: center;height:36px;">${vacUseList.start_date}</td>
+	            	<td style="cursor:pointer;text-align: center;height:36px;">${vacUseList.end_date}</td>
+	            	<td style="cursor:pointer;text-align: center;height:36px;">
+	            		<c:if test="${vacUseList.check_no == 1}">
+	            			미결제
+	            		</c:if>
+	            		<c:if test="${vacUseList.check_no == 2}">
+	            			결제
+	            		</c:if>
+	            		<c:if test="${vacUseList.check_no == 3}">
+	            			반려
+	            		</c:if>
+	            	</td>
+	            </tr>
+	        </c:forEach>
+            
+
+        </table>
+    </form>
+    </center>
+    
+    
+    <form name="vacationManage" action="/vacationManage.do" method="post"></form>
+    <form name="vacationCheck" action="/vacationCheck.do" method="post"></form>
+    <form name="vacationApply" action="/vacationApply.do" method="post"></form>
+	<form name="vacationApplyDetail" action="/vacationApplyDetail.do" method="post">
+		<input type="hidden" name="vac_use_no" value="" >
+	</form>
+    
+    
+</body>
+</html>

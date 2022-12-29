@@ -1,0 +1,169 @@
+package com.naver.erp;
+
+import java.util.List;
+import java.util.Map;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class VacationDAOImpl implements VacationDAO {
+
+	@Autowired
+	private SqlSessionTemplate sqlSession;
+	
+	//===================================================
+	public List<Map<String,String>> getVacationList(VacationSearchDTO vacationSearchDTO){
+		
+		List<Map<String,String>> vacationList = this.sqlSession.selectList(			
+				"com.naver.erp.Vacation.getVacationList"	
+				,vacationSearchDTO
+		);
+		
+		return vacationList;
+	}
+	
+	
+	//===================================================
+	public int vacationAllListTotCnt() {
+		
+		int vacationAllListTotCnt = this.sqlSession.selectOne(
+				"com.naver.erp.Vacation.vacationAllListTotCnt"
+			);
+		
+		return vacationAllListTotCnt;
+	}
+	
+	
+	//===================================================
+	public int vacationListTotCnt(VacationSearchDTO vacationSearchDTO) {
+		
+		int vacationListTotCnt = this.sqlSession.selectOne(
+				"com.naver.erp.Vacation.vacationListTotCnt"
+				,vacationSearchDTO
+			);
+		
+		return vacationListTotCnt;
+	}
+	
+	
+	
+	
+	//===================================================
+	public List<Map<String,String>> getVacationUseList( String id ){
+		
+		List<Map<String,String>> vacationUseList = this.sqlSession.selectList(			
+				"com.naver.erp.Vacation.getVacationUseList"	
+				,id
+		);
+		
+		return vacationUseList;
+	}
+	
+	
+	//===================================================
+	public List<Map<String,String>> getVacationAllUseList(){
+		
+		List<Map<String,String>> vacationAllUseList = this.sqlSession.selectList(			
+				"com.naver.erp.Vacation.getVacationAllUseList"	
+		);
+		
+		return vacationAllUseList;
+	}
+	
+	
+	
+	//===================================================
+	public String getEmpName( String id ) {
+		
+		String empName = this.sqlSession.selectOne(			
+				"com.naver.erp.Vacation.getEmpName"
+				,id
+		);
+		
+		return empName;
+	}
+	
+	
+	
+	
+	//===================================================
+	public int vacationApply( Map<String,String> vacationApply ) {
+		
+		int vacationApplyCnt = this.sqlSession.insert(
+				"com.naver.erp.Vacation.vacationApply"
+				,vacationApply
+		);
+		
+		return vacationApplyCnt;
+	}
+	
+	
+	
+	
+	//===================================================
+	public Map<String,String> getApplyDetail( int vac_use_no ){
+		
+		Map<String,String> applyDetail = this.sqlSession.selectOne(
+				"com.naver.erp.Vacation.vacationApplyDetail"
+				,vac_use_no
+		);
+			
+		return applyDetail;
+	}
+	
+	
+	
+	//===================================================
+	public int vacationCancel(int vac_use_no) {
+		
+		int cancelCnt = this.sqlSession.delete(
+				"com.naver.erp.Vacation.vacationCancel"
+				,vac_use_no
+		);
+		
+		return cancelCnt;
+	}
+
+	
+	
+	//===================================================
+	public int vacationUpdate(Map<String,String> update_data) {
+		
+		int updateCnt = this.sqlSession.update(
+				"com.naver.erp.Vacation.vacationUpdate"
+				,update_data
+		);
+		
+		return updateCnt;
+	}
+	
+	
+	//===================================================
+	public int vacationCheck( int vac_use_no ) {
+		
+		int checkCnt = this.sqlSession.delete(
+				"com.naver.erp.Vacation.vacationCheck"
+				,vac_use_no
+		);
+		
+		return checkCnt;
+	}
+	
+	
+	//===================================================
+	public int vacationNotCheck( int vac_use_no ) {
+		
+		int notCheckCnt = this.sqlSession.delete(
+				"com.naver.erp.Vacation.vacationNotCheck"
+				,vac_use_no
+		);
+		
+		return notCheckCnt;
+	}
+	
+	
+	
+	
+}

@@ -1,0 +1,285 @@
+package com.naver.erp;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@Controller
+public class VacationController {
+
+	@Autowired
+	private VacationDAO vacationDAO;
+	
+	@RequestMapping( value="/vacationMain.do")
+	public ModelAndView vacationMain(
+		HttpServletRequest request
+	) {
+		
+		String id = (String)request.getSession().getAttribute("id");
+		
+		List<Map<String,String>> vacationUseList =  this.vacationDAO.getVacationUseList( id );
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("vacationUseList",vacationUseList);
+		mav.addObject("id",id);
+		mav.setViewName("vacationMain.jsp");
+		
+		return mav;
+	//-----------------------------------
+	}	// vacationMain 함수 종료
+	//-----------------------------------	
+	
+	
+	
+	
+	@RequestMapping( value="/vacationManage.do")
+	public ModelAndView vacationManage(
+		VacationSearchDTO vacationSearchDTO
+	) {
+		int vacationAllListTotCnt = this.vacationDAO.vacationAllListTotCnt();
+		
+		int vacationListTotCnt = this.vacationDAO.vacationListTotCnt( vacationSearchDTO );
+		
+		Map<String,Integer> pagingMap = Paging.getPagingMap(
+				vacationSearchDTO.getSelectPageNo()
+				, vacationSearchDTO.getRowCntPerPage()
+				, vacationListTotCnt
+		);
+		vacationSearchDTO.setSelectPageNo((int)pagingMap.get("selectPageNo"));
+		vacationSearchDTO.setBegin_rowNo((int)pagingMap.get("begin_rowNo"));
+		vacationSearchDTO.setEnd_rowNo((int)pagingMap.get("end_rowNo"));
+		
+		List<Map<String,String>> vacationList =  this.vacationDAO.getVacationList( vacationSearchDTO );
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject(  "vacationList" , vacationList );
+		mav.addObject(  "vacationListTotCnt" , vacationListTotCnt );
+		mav.addObject(  "vacationAllListTotCnt" , vacationAllListTotCnt );
+		mav.addObject(  "pagingMap" , pagingMap );
+		mav.addObject(  "vacationSearchDTO" , vacationSearchDTO );
+		mav.addObject(  "selectPageNo" , (int)pagingMap.get("selectPageNo") );
+		mav.setViewName("vacationManage.jsp");
+		
+		return mav;
+	//-----------------------------------
+	}	// vacationManage 함수 종료
+	//-----------------------------------	
+	
+	
+	
+	
+	@RequestMapping( value="/vacationCheck.do")
+	public ModelAndView vacationSign() {
+		
+		List<Map<String,String>> vacationAllUseList =  this.vacationDAO.getVacationAllUseList( );
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject(  "vacationAllUseList" , vacationAllUseList );
+		mav.setViewName("vacationCheck.jsp");
+		
+		return mav;
+	//-----------------------------------
+	}	// vacationSign 함수 종료
+	//-----------------------------------	
+	
+
+	
+	
+	
+	
+	
+	
+	// 휴가신청 페이지(일반유저)
+	@RequestMapping( value="/vacationApply.do")
+	public ModelAndView vacationApply(
+			HttpServletRequest request
+			,HttpSession session
+	) {
+		String id = (String)request.getSession().getAttribute("id");
+		String name = this.vacationDAO.getEmpName( id );
+		
+		ModelAndView mav = new ModelAndView();
+		
+		mav.setViewName("vacationApply.jsp");
+		mav.addObject("id",id);
+		session.setAttribute( "name", name );
+		
+		return mav;
+	//-----------------------------------
+	}	// vacationApply 함수 종료
+	//-----------------------------------	
+	
+	
+	
+	// 휴가신청 상세보기(일반유저)
+	@RequestMapping( value="/vacationApplyDetail.do")
+	public ModelAndView vacationApplyDetail(
+			@RequestParam(value="vac_use_no") int vac_use_no
+			//,HttpServletRequest request
+			//,HttpSession session
+	) {
+		//String id = (String)request.getSession().getAttribute("id");
+		
+		Map<String,String> applyDetail = this.vacationDAO.getApplyDetail( vac_use_no );
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("applyDetail",applyDetail);
+		//mav.addObject("id",id);
+		
+		mav.setViewName("vacationApplyDetail.jsp");
+		
+		return mav;
+	//-----------------------------------
+	}	// vacationApply 함수 종료
+	//-----------------------------------	
+	
+	
+	
+	// 휴가결제 상세보기/결제,반려(관리자)
+	@RequestMapping( value="/vacationCheckDetail.do")
+	public ModelAndView vacationCheckDetail(
+			@RequestParam(value="vac_use_no") int vac_use_no
+	) {
+		// checkDetail에서 쓰는 데이터는 applyDetail데이터와 동일하다
+		Map<String,String> applyDetail = this.vacationDAO.getApplyDetail( vac_use_no );
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("checkDetail",applyDetail);
+		mav.setViewName("vacationCheckDetail.jsp");
+		
+		return mav;
+	//-----------------------------------
+	}	// vacationCheckDetail 함수 종료
+	//-----------------------------------	
+	
+	
+	
+	
+	
+	
+	
+	
+	//=============
+	// proc 함수
+	//=============
+	@RequestMapping( value="/vacationApplyProc.do")
+	@ResponseBody
+	public int vacationApplyProc(
+			@RequestParam(value="applyDate") String applyDate
+			,@RequestParam(value="applyStartDate") String applyStartDate
+			,@RequestParam(value="applyEndDate") String applyEndDate
+			,@RequestParam(value="vacationDays") String vacationDays
+			,@RequestParam(value="reason") String reason
+			,HttpServletRequest request
+			,HttpServletResponse response
+	) {
+		
+		String id = (String)request.getSession().getAttribute("id");
+		
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("applyDate",applyDate);
+		map.put("applyStartDate",applyStartDate);
+		map.put("applyEndDate",applyEndDate);
+		map.put("vacationDays",vacationDays);
+		map.put("reason",reason);
+		map.put("id",id);
+		
+		int applyCnt = vacationDAO.vacationApply(map);
+
+		return applyCnt;
+	}
+	
+	
+
+	@RequestMapping( value="/vacationCancelProc.do")
+	@ResponseBody
+	public int vacationCancelProc(
+			@RequestParam(value="vac_use_no") int vac_use_no
+	) {
+		
+		int cancelCnt = vacationDAO.vacationCancel(vac_use_no);
+
+		return cancelCnt;
+	}
+	
+	
+	
+	@RequestMapping( value="/vacationUpdateProc.do")
+	@ResponseBody
+	public int vacationCancelProc(
+			@RequestParam(value="update_vac") String update_vac
+			,HttpServletRequest request
+			,HttpServletResponse response
+	) {
+		System.out.println("1");
+		
+		String id = (String)request.getSession().getAttribute("id");
+		
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("update_vac",update_vac);
+		map.put("id",id);
+		
+		int updateCnt = vacationDAO.vacationUpdate(map);
+
+		System.out.println("2");
+		return updateCnt;
+	}
+	
+	
+	
+	@RequestMapping( value="/vacationCheckProc.do")
+	@ResponseBody
+	public int vacationCheckProc(
+			@RequestParam(value="vac_use_no") int vac_use_no
+			,@RequestParam(value="vac_use_no") String agree_date
+	) {
+		
+		System.out.println("1");
+		
+		Map map = new HashMap();
+		map.put("vac_use_no",vac_use_no);
+		map.put("agree_date",agree_date);
+		
+		int checkCnt = vacationDAO.vacationCheck(map);
+
+		System.out.println("2");
+		return checkCnt;
+	}
+	
+	
+	
+	@RequestMapping( value="/vacationNotCheckProc.do")
+	@ResponseBody
+	public int vacationNotCheckProc(
+			@RequestParam(value="vac_use_no") int vac_use_no
+			,@RequestParam(value="vac_use_no") String agree_date
+	) {
+		Map map = new HashMap();
+		map.put("vac_use_no",vac_use_no);
+		map.put("agree_date",agree_date);
+
+		int notCheckCnt = vacationDAO.vacationNotCheck(map);
+
+		return notCheckCnt;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}
