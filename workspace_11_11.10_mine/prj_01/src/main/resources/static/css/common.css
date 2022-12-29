@@ -1,0 +1,60 @@
+@charset "UTF-8";
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* body 태그, form 태그, td 태그, th 태그 , pre 태그 관련 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+body,form,td,th,pre,span { 
+	font-size: 9pt;  
+	color: black; 
+	line-height: 160%; 
+	font-family: 굴림,tahoma,돋움,verdana; 
+}
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* input 태그, select 태그 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+input,select { 
+	font-size: 9pt; 
+	color:black; 
+	font-family: 굴림,tahoma,돋움,verdana; 
+	height: 20px; 
+}
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* textarea 태그 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+textarea{ 
+	font-size: 9pt; 
+	color:black; 
+	font-family: 굴림,tahoma,돋움,verdana; 
+}
+
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* a 태그 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+a:link {text-decoration:none;color:#696969} 
+a:hover{text-decoration:none;color:#66ccff} 
+a:visited {text-decoration:none;color:#330066}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

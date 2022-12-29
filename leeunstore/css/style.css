@@ -1,0 +1,78 @@
+body {margin: 0;}
+ul li {list-style: none;}
+a {text-decoration: none;}
+a:link, a:visited { color: black;}
+h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+.inline>* {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 12px;
+}
+@font-face {
+    font-family:'MalgunGothic';
+    src: url('font/MalgunGothic.eot');
+    src: url('font/MalgunGothic.eot?#iefix') format('embedded-opentype'),
+         url('font/MalgunGothic.woff') format('woff'),
+         url('font/MalgunGothic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+#wrap {padding: 0 21px; margin: 0 auto; box-sizing: border-box; max-width: 1657px; font-family: '맑은고딕', 'MalgunGothic'; display: block;}
+/* header */
+#header {padding-left: 275px; padding: 0 auto; box-sizing: border-box; max-width: 1600px; position: static; }
+#header_all {padding: 60px 0 50px; position: relative; }
+#header_all ul {position: absolute; top: 47px; right: 0; }
+#header_all ul li {float: left;}
+#header_all ul li:nth-of-type(1) {margin: 0;}
+#header_all .basket {margin-left: 30px; }
+/* /header */
+/*nav*/
+#nav {font-size: 12px; position: fixed; top: 60px; width: 275px; box-sizing: border-box; padding-right: 20px; z-index: 9; background: #fff;}
+#nav ul {text-align: left; display: block; -webkit-padding-start: 10px;}
+#nav li { padding: 0 0 10px 0; }
+#nav li:nth-of-type(1) { padding-bottom: 45px; }
+#nav li:nth-of-type(6) { padding-top: 45px; }
+/* /nav */
+/* container */
+#container {max-width: 1600px; padding-left: 275px; min-width: auto; padding-top: 20px; position: relative;}
+#container #main_banner {padding-bottom: 30px;}
+#container #main_banner a img {width: 100%;}
+#container .main_tit { padding: 90px 0 20px; margin: 0;}
+#container .main_tit a {display: inline-block; line-height: 1; font-size: 22px; font-weight: normal;}
+#container ul { vertical-align: top; font-size: 12px; margin: 0; padding: 0;}
+#container ul li { margin-right: 20px; width: calc(33.3333% - 13.34px); display: inline-block; vertical-align: top;}
+#container ul li div img {object-fit: cover; max-width: 100%; height: auto;}
+#container ul li div .name {text-align: center;}
+#container ul li:nth-of-type(1) {margin-top: 0;}
+#container ul li:nth-of-type(2) {margin-top: 0;}
+#container ul li:nth-of-type(3) {margin-top: 0;}
+#container ul li:nth-of-type(3n) {margin-right: 0;}
+#container .ceramic>div {}
+#container .glass>div {}
+#container .metal>div {}
+#container .paper>div {}
+#container .fabric>div {}
+/* /container */
+/* footer */
+#footer {width: 100%; border: none; padding: 55px 0 30px; line-height: 1.8; box-sizing: border-box; margin-top: 200px;}
+#footer .footer_all {max-width: 1300px; padding-left: 275px; position: relative; padding-right: 100px;}
+#footer .footer_all .f_menu {padding-bottom: 5px; height: 16.797px;}
+#footer .footer_all .f_menu ul {padding-left: 0; margin: 0;}
+#footer .footer_all .f_menu p {margin: 0; padding-left: 35px;}
+#footer .footer_all .f_menu ul:nth-of-type(1) {padding-right: 35px;}
+#footer .footer_all .f_menu ul:nth-of-type(1) li:first-child { padding: 0;}
+#footer .footer_all .f_menu ul li { padding-left: 15px;}
+#footer .footer_all .f_menu ul li a {display: block; font-size: 10px; position: relative;}
+#footer .footer_all .f_info {line-height: 17px; font-size: 1px;}
+#footer .footer_all .f_info span {padding-right: 10px; }
+/* /footer */
+
+/* 폰트가 추가가 안되서 안맞는것도 있음 */
